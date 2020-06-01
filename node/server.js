@@ -1,26 +1,18 @@
 const express = require("express");
 const http = require("http");
 const fs = require("fs");
-const util = require("util");
 const moment = require("moment");
+const {
+  filter_array,
+  save_to_file,
+  read_file
+} = require("./helpers")
 const app = express();
 const port = 4000;
 const body_parser = require("body-parser");
 
 app.use(body_parser.json());
 const server = http.createServer(app);
-const read_file = util.promisify(fs.readFile);
-
-function save_to_file(filename, new_data, cb) {
-  read_file(filename)
-    .then(data => {
-      let arr = JSON.parse(data); //now its an arr
-      arr.push(new_data);
-      let json = JSON.stringify(arr); //convert it back to json
-      fs.writeFile(filename, json, "utf8", cb); // write it back
-    })
-    .catch(err => console.log(err));
-}
 app.post("/submit", function(req, res, next) {
   const {
     author_name,
@@ -75,24 +67,9 @@ app.get("/feedback", async function(req, res) {
   res.json(filtered);
 });
 
-function filter_array(array, filters) {
-  const filter_keys = Object.keys(filters)
-
-  return array.filter(item => {
-    return filter_keys.every(key => {
-      if (typeof filters[key] !== 'function') return true;
-      if (key === "from_date" || key === "to_date") return filters[key](item["date_created"])
-      if (key === "by_name") return filters[key](item["author_name"])
-    })
-  })
-}
 app.use(function(err, req, res, next) {
   // formulate an error response here
   console.log("ERR ", err);
   res.status(500).send(err);
 });
 server.listen(port, () => console.log(`Server listening on port ${port}`));
-module.exports = {
-  filter_array,
-  save_to_file,
-}

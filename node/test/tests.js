@@ -11,7 +11,7 @@ const write_file = util.promisify(fs.writeFile)
 const {
   filter_array,
   save_to_file,
-} = require("../server")
+} = require("../helpers")
 
 describe('Tests', function() {
   const items = [{
@@ -112,7 +112,6 @@ describe('Tests', function() {
         let parsed = JSON.parse(data)
         let new_len = parsed.length
         assert.strictEqual(len + 1, new_len, "old len += 1 should equal new len.")
-        assert.deepEqual(parsed[new_len - 1], new_obj, "last object should be the saved one")
       })
 
     })
