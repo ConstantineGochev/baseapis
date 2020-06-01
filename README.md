@@ -1,6 +1,6 @@
 # Base apis
-Tiny apis in rust(actix) and nodejs(express) .
-POST /submit expects json with the following format
+Tiny apis in rust(actix) and nodejs(express) .<br />
+**POST /submit** expects json with the following format
 ```javascript
   {
     "author_name": "A",
@@ -8,7 +8,7 @@ POST /submit expects json with the following format
     "date_created": "2011-03-15"
   }
 ```
-GET /feedback returns filtered data with optional query params.
+**GET /feedback** returns filtered data with optional query params. <br />
 Query params are `by_name`, `from_date` and `to_date`
 
 ## Get Started
