@@ -22,7 +22,11 @@ function save_to_file(filename, new_data, cb) {
     .catch(err => console.log(err));
 }
 app.post("/submit", function(req, res, next) {
-  const { author_name, body, date_created } = req.body;
+  const {
+    author_name,
+    body,
+    date_created
+  } = req.body;
   if (author_name === undefined) {
     return next("Provide author_name field.");
   } else if (body === undefined) {
@@ -46,29 +50,39 @@ app.post("/submit", function(req, res, next) {
   });
 });
 app.get("/feedback", async function(req, res) {
+
   let data = await read_file("db.json");
   let parsed = JSON.parse(data);
-  const { from_date, to_date, by_name } = req.query;
+  const {
+    from_date,
+    to_date,
+    by_name
+  } = req.query;
   let query_obj = {};
+
   if (from_date && moment(new Date(from_date)).isValid()) {
     query_obj["from_date"] = obj_date => moment(obj_date).isAfter(from_date);
   }
+
   if (to_date && moment(new Date(to_date)).isValid()) {
     query_obj["to_date"] = obj_date => moment(obj_date).isBefore(to_date);
   }
+
   if (by_name) {
     query_obj["by_name"] = obj_name => by_name === obj_name;
   }
   const filtered = filter_array(parsed, query_obj)
   res.json(filtered);
 });
+
 function filter_array(array, filters) {
   const filter_keys = Object.keys(filters)
+
   return array.filter(item => {
     return filter_keys.every(key => {
-      if(typeof filters[key] !== 'function') return true;
-       if(key === "from_date" || key === "to_date") return filters[key](item["date_created"])
-       if(key === "by_name") return filters[key](item["author_name"])
+      if (typeof filters[key] !== 'function') return true;
+      if (key === "from_date" || key === "to_date") return filters[key](item["date_created"])
+      if (key === "by_name") return filters[key](item["author_name"])
     })
   })
 }
@@ -78,3 +92,7 @@ app.use(function(err, req, res, next) {
   res.status(500).send(err);
 });
 server.listen(port, () => console.log(`Server listening on port ${port}`));
+module.exports = {
+  filter_array,
+  save_to_file,
+}

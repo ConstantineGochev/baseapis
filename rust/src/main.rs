@@ -1,11 +1,11 @@
 use actix_web::{web, App, HttpResponse, HttpServer,  middleware};
 use std::fs::{File, write};
 use std::io::prelude::*;
-use std::error::Error;
 use std::path::Path;
 use serde::{Serialize, Deserialize};
 use serde_json::*;
 use chrono::{NaiveDate};
+
 
 fn read_file(path: &Path) -> String{
     let display = path.display();
@@ -14,16 +14,14 @@ fn read_file(path: &Path) -> String{
     let mut file = match File::open(path) {
         // The `description` method of `io::Error` returns a string that
         // describes the error
-        Err(why) => panic!("couldn't open {}: {}", display,
-                                                   why.description()),
+        Err(why) => panic!("couldn't open {}", display),
         Ok(file) => file,
     };
     //
     // Read the file contents into a string, returns `io::Result<usize>`
     let mut s = String::new();
     match file.read_to_string(&mut s) {
-        Err(why) => panic!("couldn't read {}: {}", display,
-                                                   why.description()),
+        Err(why) => panic!("couldn't read {}", display),
         Ok(_) => print!("{} contains:\n{}", display, s),
     }
     s
@@ -31,7 +29,7 @@ fn read_file(path: &Path) -> String{
 
 #[test]
 fn test_read_file() {
-    let path = &Path::new("/etc/hosts");
+    let path = &Path::new("db.json");
     println!("{:?}", path);
     read_file(path);
 }
